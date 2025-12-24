@@ -1,0 +1,95 @@
+================================================================================
+IMPORTANT - SOLUTIONS AND ANSWERS FOR KIDS HANUKA Q-1-2-3
+================================================================================
+
+GitHub Repository: https://github.com/shir-openu/kids-hanuka-Q-1-2-3
+GitHub Pages URL:  https://shir-openu.github.io/kids-hanuka-Q-1-2-3/
+
+================================================================================
+QUESTION 1 - CORRECT ANSWERS
+================================================================================
+
+Given: ∠A₁ = ∠A₂ = ∠A₃ = 20°, and at E marked 75°
+
+a. ∠ADE = 55°
+   Explanation: Adjacent angles on a line sum to 180°
+
+b. ∠ACD = 35°
+   Explanation: Sum of angles in triangle ACD = 180°
+
+c. ∠ABC = 15°
+   Explanation: Sum of angles in triangle ABC = 180°, ∠BAC = 60°
+
+================================================================================
+QUESTION 2 - CORRECT ANSWERS
+================================================================================
+
+Given: ∠A = 50°, right angle at D, ∠BDC = 70°
+
+a. ∠CAD = 20°
+   Explanation: AD bisects angle A, so ∠CAD = part of ∠BAC
+
+b. ∠ABE = 20°
+   Explanation: In triangle ABD, ∠ADB = 90°, sum = 180°
+
+c. ∠BFD = 70°
+   Explanation: Sum of angles in triangle BFD = 180°
+
+d. ∠DFE = 110°
+   Explanation: ∠BFD and ∠DFE are adjacent angles on a line (180° - 70° = 110°)
+
+================================================================================
+QUESTION 3 - CORRECT ANSWERS
+================================================================================
+
+Given: Isosceles triangle AB = AC, base angles = 64°, AK bisects ∠DAC
+
+a. ∠BAC = 52°
+   Explanation: Sum of angles in triangle = 180°, so 180° - 64° - 64° = 52°
+
+b. ∠DAC = 128°
+   Explanation: External angle = 180° - internal angle = 180° - 52° = 128°
+
+c. ∠KAC = 64°
+   Explanation: AK bisects ∠DAC, so 128° ÷ 2 = 64°
+
+d. PROOF: BC || AK
+   Because ∠KAC = ∠ACB = 64° (alternate angles are equal → parallel lines)
+
+================================================================================
+FILES STRUCTURE FOR GITHUB
+================================================================================
+
+All files must be in the SAME folder:
+
+kids-hanuka-Q-1-2-3/
+├── index.html          (the main HTML file - v4)
+├── q1_drawing.svg      (drawing for question 1)
+├── q2_drawing.svg      (drawing for question 2)
+└── q3_drawing.svg      (drawing for question 3)
+
+IMPORTANT: The HTML references SVGs with src="q1_drawing.svg" (same folder).
+If SVGs are in a different folder, they won't display!
+
+================================================================================
+FEATURES OF THE INTERACTIVE HTML
+================================================================================
+
+1. Progressive hints - shows different hints on each wrong attempt
+2. After 5 wrong attempts - reveals the correct answer
+3. Confetti celebration on correct answer
+4. Enter key works to submit answer
+5. Light theme (white background) - kid-friendly
+6. Hebrew RTL support
+7. Question 3d shows the proof directly (no input needed)
+
+================================================================================
+VERSION HISTORY
+================================================================================
+
+- v1: First attempt with manually drawn SVG (inaccurate)
+- v2: Added hints system, still manual SVG
+- v3: Used original SVG files with "../" path (didn't work on GitHub)
+- v4: FINAL - SVG files in same folder, works on GitHub Pages
+
+================================================================================
