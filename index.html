@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>חישוב זוויות</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --ink: #1a1a1a;
+    --panel: #f8f9fa;
+    --border: #dee2e6;
+    --purple: #7c3aed;
+    --green: #22c55e;
+    --orange: #f59e0b;
+    --teal: #14b8a6;
+    --cyan: #06b6d4;
+    --yellow: #eab308;
+    --red: #ef4444;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    font-size: 20px;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .title {
+    text-align: center;
+    font-size: 32px;
+    color: var(--ink);
+    margin-bottom: 25px;
+    text-decoration: underline;
+  }
+
+  .exercise {
+    background: var(--panel);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 30px;
+  }
+
+  .exercise-title {
+    font-size: 24px;
+    color: var(--purple);
+    margin-bottom: 15px;
+    font-weight: bold;
+  }
+
+  .drawing-container {
+    display: flex;
+    justify-content: center;
+    margin: 15px 0;
+    background: white;
+    border-radius: 12px;
+    padding: 10px;
+  }
+
+  .drawing-container img,
+  .drawing-container object {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .given-box {
+    background: rgba(124, 58, 237, 0.1);
+    border: 2px solid var(--purple);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin: 15px 0;
+    font-size: 18px;
+  }
+
+  .questions-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 15px;
+  }
+
+  .question-item {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    transition: all 0.3s;
+  }
+
+  .question-item.correct {
+    border-color: var(--green);
+    background: rgba(34, 197, 94, 0.1);
+  }
+
+  .question-item.hint {
+    border-color: var(--orange);
+    background: rgba(245, 158, 11, 0.05);
+  }
+
+  .question-label {
+    color: var(--purple);
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .math-expr {
+    direction: ltr;
+    display: inline;
+    font-family: 'Times New Roman', serif;
+    font-size: 24px;
+  }
+
+  .answer-input {
+    width: 80px;
+    padding: 10px;
+    font-size: 22px;
+    text-align: center;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    background: white;
+    color: var(--ink);
+  }
+
+  .answer-input:focus {
+    outline: none;
+    border-color: var(--cyan);
+  }
+
+  .answer-input.correct {
+    border-color: var(--green);
+    background: rgba(34, 197, 94, 0.15);
+  }
+
+  .answer-input.wrong {
+    border-color: var(--red);
+    animation: shake 0.3s;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+
+  .check-btn {
+    padding: 8px 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 8px;
+    background: var(--cyan);
+    color: white;
+    cursor: pointer;
+    margin-top: 10px;
+    font-weight: bold;
+  }
+
+  .check-btn:hover {
+    background: var(--teal);
+  }
+
+  .check-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+
+  .hint-box {
+    margin-top: 12px;
+    padding: 12px;
+    background: rgba(245, 158, 11, 0.15);
+    border: 2px solid var(--orange);
+    border-radius: 8px;
+    font-size: 16px;
+    color: #92400e;
+    display: none;
+    text-align: right;
+  }
+
+  .hint-box.show {
+    display: block;
+    animation: fadeIn 0.3s;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .proof-box {
+    background: rgba(34, 197, 94, 0.1);
+    border: 2px solid var(--green);
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 16px;
+    color: #166534;
+  }
+
+  .celebration {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  .confetti {
+    position: absolute;
+    width: 12px; height: 12px;
+    border-radius: 2px;
+    animation: fall 3s ease-out forwards;
+  }
+
+  @keyframes fall {
+    0% { transform: translateY(-50px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  .success-msg {
+    color: var(--green);
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 10px;
+    display: none;
+  }
+
+  .success-msg.show {
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="title">חישוב זוויות</div>
+
+  <!-- שאלה 1 -->
+  <div class="exercise">
+    <div class="exercise-title">שאלה 1</div>
+
+    <div class="drawing-container">
+      <object data="../q1_drawing.svg" type="image/svg+xml" width="450" height="280">
+        <img src="../q1_drawing.svg" alt="שרטוט שאלה 1">
+      </object>
+    </div>
+
+    <div class="given-box">
+      <div><strong>נתון:</strong> <span class="math-expr">∠A₁ = ∠A₂ = ∠A₃ = 20°</span>, וב-E מסומן 75°</div>
+      <div>היעזרו בנתונים שבשרטוט וחשבו את הזוויות:</div>
+    </div>
+
+    <div class="questions-grid">
+      <div class="question-item" id="q1a-item">
+        <div class="question-label">א.</div>
+        <span class="math-expr">∠ADE = </span>
+        <input type="text" class="answer-input" id="q1a" placeholder="?" maxlength="4">°
+        <br><button class="check-btn" onclick="checkAnswer('q1a', 55)">בדוק</button>
+        <div class="hint-box" id="hint-q1a"></div>
+        <div class="success-msg" id="success-q1a">✓ נכון!</div>
+      </div>
+      <div class="question-item" id="q1b-item">
+        <div class="question-label">ב.</div>
+        <span class="math-expr">∠ACD = </span>
+        <input type="text" class="answer-input" id="q1b" placeholder="?" maxlength="4">°
+        <br><button class="check-btn" onclick="checkAnswer('q1b', 35)">בדוק</button>
+        <div class="hint-box" id="hint-q1b"></div>
+        <div class="success-msg" id="success-q1b">✓ נכון!</div>
+      </div>
+      <div class="question-item" id="q1c-item">
+        <div class="question-label">ג.</div>
+        <span class="math-expr">∠ABC = </span>
+        <input type="text" class="answer-input" id="q1c" placeholder="?" maxlength="4">°
+        <br><button class="check-btn" onclick="checkAnswer('q1c', 15)">בדוק</button>
+        <div class="hint-box" id="hint-q1c"></div>
+        <div class="success-msg" id="success-q1c">✓ נכון!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- שאלה 2 -->
+  <div class="exercise">
+    <div class="exercise-title">שאלה 2</div>
+
+    <div class="drawing-container">
+      <object data="../q2_drawing.svg" type="image/svg+xml" width="400" height="280">
+        <img src="../q2_drawing.svg" alt="שרטוט שאלה 2">
+      </object>
+    </div>
+
+    <div class="given-box">
+      <div>היעזרו בנתונים שבשרטוט וחשבו את הזוויות:</div>
+    </div>
+
+    <div class="questions-grid">
+      <div class="question-item" id="q2a-item">
+        <div class="question-label">א.</div>
+        <span class="math-expr">∠CAD = </span>
+        <input type="text" class="answer-input" id="q2a" placeholder="?" maxlength="4">°
+        <br><button class="check-btn" onclick="checkAnswer('q2a', 20)">בדוק</button>
+        <div class="hint-box" id="hint-q2a"></div>
+        <div class="success-msg" id="success-q2a">✓ נכון!</div>
+      </div>
+      <div class="question-item" id="q2b-item">
+        <div class="question-label">ב.</div>
+        <span class="math-expr">∠ABE = </span>
+        <input type="text" class="answer-input" id="q2b" placeholder="?" maxlength="4">°
+        <br><button class="check-btn" onclick="checkAnswer('q2b', 20)">בדוק</button>
+        <div class="hint-box" id="hint-q2b"></div>
+        <div class="success-msg" id="success-q2b">✓ נכון!</div>
+      </div>
+      <div class="question-item" id="q2c-item">
+        <div class="question-label">ג.</div>
+        <span class="math-expr">∠BFD = </span>
+        <input type="text" class="answer-input" id="q2c" placeholder="?" maxlength="4">°
+        <br><button class="check-btn" onclick="checkAnswer('q2c', 70)">בדוק</button>
+        <div class="hint-box" id="hint-q2c"></div>
+        <div class="success-msg" id="success-q2c">✓ נכון!</div>
+      </div>
+      <div class="question-item" id="q2d-item">
+        <div class="question-label">ד.</div>
+        <span class="math-expr">∠DFE = </span>
+        <input type="text" class="answer-input" id="q2d" placeholder="?" maxlength="4">°
+        <br><button class="check-btn" onclick="checkAnswer('q2d', 110)">בדוק</button>
+        <div class="hint-box" id="hint-q2d"></div>
+        <div class="success-msg" id="success-q2d">✓ נכון!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- שאלה 3 -->
+  <div class="exercise">
+    <div class="exercise-title">שאלה 3</div>
+
+    <div class="drawing-container">
+      <object data="../q3_drawing.svg" type="image/svg+xml" width="420" height="280">
+        <img src="../q3_drawing.svg" alt="שרטוט שאלה 3">
+      </object>
+    </div>
+
+    <div class="given-box">
+      <div><strong>נתון:</strong> משולש שווה-שוקיים <span class="math-expr">AB = AC</span>, זוויות בסיס 64°</div>
+      <div>AK חוצה את <span class="math-expr">∠DAC</span></div>
+    </div>
+
+    <div class="questions-grid">
+      <div class="question-item" id="q3a-item">
+        <div class="question-label">א.</div>
+        <span class="math-expr">∠BAC = </span>
+        <input type="text" class="answer-input" id="q3a" placeholder="?" maxlength="4">°
+        <br><button class="check-btn" onclick="checkAnswer('q3a', 52)">בדוק</button>
+        <div class="hint-box" id="hint-q3a"></div>
+        <div class="success-msg" id="success-q3a">✓ נכון!</div>
+      </div>
+      <div class="question-item" id="q3b-item">
+        <div class="question-label">ב.</div>
+        <span class="math-expr">∠DAC = </span>
+        <input type="text" class="answer-input" id="q3b" placeholder="?" maxlength="4">°
+        <br><button class="check-btn" onclick="checkAnswer('q3b', 128)">בדוק</button>
+        <div class="hint-box" id="hint-q3b"></div>
+        <div class="success-msg" id="success-q3b">✓ נכון!</div>
+      </div>
+      <div class="question-item" id="q3c-item">
+        <div class="question-label">ג.</div>
+        <span class="math-expr">∠KAC = </span>
+        <input type="text" class="answer-input" id="q3c" placeholder="?" maxlength="4">°
+        <br><button class="check-btn" onclick="checkAnswer('q3c', 64)">בדוק</button>
+        <div class="hint-box" id="hint-q3c"></div>
+        <div class="success-msg" id="success-q3c">✓ נכון!</div>
+      </div>
+      <div class="question-item" id="q3d-item">
+        <div class="question-label">ד. הוכח: BC || AK</div>
+        <div class="proof-box">
+          <span class="math-expr">∠KAC = ∠ACB = 64°</span><br>
+          זוויות מתחלפות שוות → ישרים מקבילים
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="celebration" id="celebration"></div>
+
+<script>
+const hints = {
+  'q1a': ['∠ADE ו-∠ADB הן זוויות על ישר', 'זוויות סמוכות על ישר סכומן 180°', 'חשבו: 180° - 125° = ?'],
+  'q1b': ['הסתכלו על משולש ACD', 'סכום זוויות במשולש = 180°', '∠CAD = 20°, ∠ADC = 125°'],
+  'q1c': ['הסתכלו על משולש ABC', '∠BAC = 60° (שלושה פעמים 20°)', 'סכום זוויות במשולש = 180°'],
+  'q2a': ['AD מחלק את זווית A', 'הסתכלו על הזווית בין AC ל-AD', '∠CAD הוא חלק מ-∠BAC'],
+  'q2b': ['הסתכלו על משולש ABD', '∠ADB = 90° (זווית ישרה)', 'סכום זוויות במשולש = 180°'],
+  'q2c': ['F היא נקודת חיתוך', 'הסתכלו על משולש BFD', 'השתמשו בזוויות שכבר מצאתם'],
+  'q2d': ['∠BFD ו-∠DFE הן זוויות סמוכות', 'זוויות על ישר סכומן 180°', '180° - ∠BFD = ?'],
+  'q3a': ['במשולש שווה-שוקיים זוויות הבסיס שוות', 'סכום זוויות במשולש = 180°', '180° - 64° - 64° = ?'],
+  'q3b': ['∠DAC היא זווית חיצונית', 'זווית חיצונית + זווית פנימית = 180°', '180° - ∠BAC = ?'],
+  'q3c': ['AK חוצה את ∠DAC', 'חוצה = מחלק לשני חלקים שווים', '∠DAC ÷ 2 = ?']
+};
+
+let attempts = {};
+
+function checkAnswer(id, correct) {
+  const input = document.getElementById(id);
+  const item = document.getElementById(id + '-item');
+  const hintBox = document.getElementById('hint-' + id);
+  const successMsg = document.getElementById('success-' + id);
+  const value = parseInt(input.value.trim());
+
+  if (!attempts[id]) attempts[id] = 0;
+  attempts[id]++;
+
+  if (value === correct) {
+    input.classList.remove('wrong');
+    input.classList.add('correct');
+    item.classList.add('correct');
+    item.classList.remove('hint');
+    hintBox.classList.remove('show');
+    successMsg.classList.add('show');
+    input.disabled = true;
+    item.querySelector('.check-btn').disabled = true;
+    createConfetti();
+  } else {
+    input.classList.add('wrong');
+    item.classList.add('hint');
+    setTimeout(() => input.classList.remove('wrong'), 300);
+
+    // Show progressive hints
+    const hintIndex = Math.min(attempts[id] - 1, hints[id].length - 1);
+    let hintText = '💡 רמז ' + attempts[id] + ': ' + hints[id][hintIndex];
+
+    if (attempts[id] >= 5) {
+      hintText += '<br>🎯 התשובה הנכונה היא: ' + correct + '°';
+    }
+
+    hintBox.innerHTML = hintText;
+    hintBox.classList.add('show');
+
+    input.value = '';
+    input.focus();
+  }
+}
+
+function createConfetti() {
+  const c = document.getElementById('celebration');
+  const colors = ['#fde047', '#4ade80', '#2dd4bf', '#a3e635', '#22d3ee', '#f472b6', '#a78bfa'];
+  for (let i = 0; i < 40; i++) {
+    const d = document.createElement('div');
+    d.className = 'confetti';
+    d.style.left = Math.random() * 100 + '%';
+    d.style.background = colors[Math.floor(Math.random() * colors.length)];
+    d.style.animationDelay = Math.random() * 0.5 + 's';
+    c.appendChild(d);
+  }
+  setTimeout(() => { c.innerHTML = ''; }, 3000);
+}
+
+// Enter key support
+document.querySelectorAll('.answer-input').forEach(input => {
+  input.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      const btn = input.parentElement.querySelector('.check-btn');
+      if (!btn.disabled) btn.click();
+    }
+  });
+});
+</script>
+
+</body>
+</html>
