@@ -69,8 +69,7 @@
     padding: 10px;
   }
 
-  .drawing-container img,
-  .drawing-container object {
+  .drawing-container img {
     max-width: 100%;
     height: auto;
   }
@@ -251,9 +250,7 @@
     <div class="exercise-title">שאלה 1</div>
 
     <div class="drawing-container">
-      <object data="../q1_drawing.svg" type="image/svg+xml" width="450" height="280">
-        <img src="../q1_drawing.svg" alt="שרטוט שאלה 1">
-      </object>
+      <img src="q1_drawing.svg" alt="שרטוט שאלה 1">
     </div>
 
     <div class="given-box">
@@ -294,9 +291,7 @@
     <div class="exercise-title">שאלה 2</div>
 
     <div class="drawing-container">
-      <object data="../q2_drawing.svg" type="image/svg+xml" width="400" height="280">
-        <img src="../q2_drawing.svg" alt="שרטוט שאלה 2">
-      </object>
+      <img src="q2_drawing.svg" alt="שרטוט שאלה 2">
     </div>
 
     <div class="given-box">
@@ -344,9 +339,7 @@
     <div class="exercise-title">שאלה 3</div>
 
     <div class="drawing-container">
-      <object data="../q3_drawing.svg" type="image/svg+xml" width="420" height="280">
-        <img src="../q3_drawing.svg" alt="שרטוט שאלה 3">
-      </object>
+      <img src="q3_drawing.svg" alt="שרטוט שאלה 3">
     </div>
 
     <div class="given-box">
@@ -434,7 +427,6 @@ function checkAnswer(id, correct) {
     item.classList.add('hint');
     setTimeout(() => input.classList.remove('wrong'), 300);
 
-    // Show progressive hints
     const hintIndex = Math.min(attempts[id] - 1, hints[id].length - 1);
     let hintText = '💡 רמז ' + attempts[id] + ': ' + hints[id][hintIndex];
 
@@ -464,7 +456,6 @@ function createConfetti() {
   setTimeout(() => { c.innerHTML = ''; }, 3000);
 }
 
-// Enter key support
 document.querySelectorAll('.answer-input').forEach(input => {
   input.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
